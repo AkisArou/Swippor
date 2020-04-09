@@ -12,7 +12,7 @@ export declare class Swippor {
     private thresholdSwipingX;
     constructor(onTouchEndNotify?: TouchEndNotifiable | undefined);
     private static translate;
-    setRefs(references: NodeListOf<HTMLElement> | undefined): this;
+    setRefs(references: HTMLElement[] | undefined): this;
     private initialize;
     onElementClicked: (position: number) => void;
     private getSwipingDirectionRight;

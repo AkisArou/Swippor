@@ -12,7 +12,7 @@ enum OriginalSwipeOrientation {
 
 export class Swippor {
     //Current manipulated objects
-    private references?: NodeListOf<HTMLElement>;
+    private references?: HTMLElement[];
     //Element width used for swipe thresholds
     private elementWidth = 0;
     //Position x of the first touch
@@ -39,7 +39,7 @@ export class Swippor {
     }
 
     //Used for html elements setup
-    public setRefs(references: NodeListOf<HTMLElement> | undefined): this {
+    public setRefs(references: HTMLElement[] | undefined): this {
         this.references = references;
         this.initialize();
         return this;
