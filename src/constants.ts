@@ -1,0 +1,12 @@
+export const kHundredPercent = "100%";
+export const kZero = "0";
+export const kPlus = "+";
+export const kMinus = "-";
+export const kPercentage = "%";
+export const kPixel = "px";
+export const kTranslateX = "translateX";
+export const kAnimatedClass = "Animated";
+export const kTransitionEnd = "transitionend";
+export const kTouchStart = "touchstart";
+export const kTouchMove = "touchmove";
+export const kTouchEnd = "touchend";
