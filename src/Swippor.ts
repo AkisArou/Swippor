@@ -252,7 +252,6 @@ export class Swippor {
         const translationValNextShowingElement = singForNextShowingElement + changeNextShowingElement + Const.kPixel;
         //Ready for usage string on translation for previous showing element
         const translationValPreviousShowingElement = signForCurrentShowingElement + changePreviousElement + Const.kPixel;
-        console.log(translationValPreviousShowingElement)
 
         //Current and to be shown elements
         const {currentShowingElement, nextShowingElement, previousElement} = this.getElements(isMovingHandLeft, position);
@@ -262,7 +261,6 @@ export class Swippor {
         //Resets when the element resets to its original position
         const isInitialSwipeDirectionNegative = this.isInitialSwipeDirectionNegative(isMovingHandLeft, position);
 
-        console.log(isInitialSwipeDirectionNegative, "isInitialSwipeDirectionNegative")
 
         //Check if elements are still animating. If so, return
         if (this.getElementsAreStillAnimating([currentShowingElement, nextShowingElement, previousElement])) return;
@@ -297,7 +295,6 @@ export class Swippor {
             Swippor.translate(nextShowingElement, translationValNextShowingElement);
             //if there is a previous element, translate it accordingly.
             //It may not seems so difference but sometimes it sticks buggy to the edge of the screen
-            console.log(previousElement, "previousElement")
             if (previousElement) Swippor.translate(previousElement, translationValPreviousShowingElement)
         }
     };
