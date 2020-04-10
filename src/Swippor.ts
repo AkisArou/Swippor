@@ -175,7 +175,7 @@ export class Swippor {
         return elements
             .filter(element => !!element)
             .reduce<boolean>((acc, currentElement) =>
-                currentElement.classList.contains(this.kTransitionClass), false);
+                currentElement.classList.contains(this.kTransitionClass), false)
     }
 
     //Iterates over selected elements or single element, adding css transition class
@@ -208,6 +208,7 @@ export class Swippor {
     private touchStartHandler = (evt: TouchEvent): void => {
         evt.preventDefault();
         this.setCurrentWorkingPosition(Swippor.getSwipporDatasetAttribute(evt.currentTarget!));
+        // this.references?.forEach(ref => ref.classList.add(this.kTransitionClass))
 
         this.startingTouchX = evt.touches[0].clientX;
         this.elementWidth = this.references?.[0].offsetWidth ?? 0;
@@ -261,7 +262,7 @@ export class Swippor {
         //Resets when the element resets to its original position
         const isInitialSwipeDirectionNegative = this.isInitialSwipeDirectionNegative(isMovingHandLeft, position);
 
-
+        // this.references?.forEach(ref => ref.classList.remove(this.kTransitionClass))
         //Check if elements are still animating. If so, return
         if (this.getElementsAreStillAnimating([currentShowingElement, nextShowingElement, previousElement])) return;
 
@@ -279,7 +280,7 @@ export class Swippor {
             //Shows swiping direction until reaching the threshold
             const newThresholdSwipingX = this.sideElementsThreshold - change;
 
-
+            // (this.sideElementsThreshold - change< this.thresholdSwipingX)
             //If the new thresholdSwipingX is smaller than the previous one: Goes towards the null element
             if (newThresholdSwipingX < this.thresholdSwipingX) this.animate(currentShowingElement);
             else currentShowingElement.classList.remove(this.kTransitionClass);
@@ -330,7 +331,8 @@ export class Swippor {
         //Resets when the element resets to its original position
         const isInitialSwipeDirectionNegative = this.isInitialSwipeDirectionNegative(isMovingHandRight, position);
 
-
+        // this.references?.forEach(ref => ref.classList.add(this.kTransitionClass))
+        //
         //Negative swipe towards null element swipe finished and results to original unchanged animated position
         //Values reset ready for next touch and other side effects
         if (isInitialSwipeDirectionNegative) {
@@ -342,6 +344,8 @@ export class Swippor {
 
             if (previousElement)
                 Swippor.translate(previousElement, previousElementSign + Const.kHundredPercent);
+            if(morePrev)
+                Swippor.translate(morePrev, thresholdSign + Const.kTwoHundredPercent);
 
             Swippor.translate(currentShowingElement, Const.kZero);
             this.setReadyNextTouch(nextPosition, false);
@@ -359,6 +363,7 @@ export class Swippor {
             if (previousElement)
                 Swippor.translate(previousElement, previousElementSign + Const.kHundredPercent);
 
+
             Swippor.translate(nextShowingElement, thresholdSign + Const.kHundredPercent);
             Swippor.translate(currentShowingElement, Const.kZero);
             this.setReadyNextTouch(nextPosition, false);
@@ -375,7 +380,9 @@ export class Swippor {
 
             //
             if (previousElement) Swippor.translate(previousElement, signForCurrentShowingElement + Const.kTwoHundredPercent);
-            if(morePrev) Swippor.translate(morePrev, thresholdSign + Const.kHundredPercent)
+
+            if(morePrev)
+                Swippor.translate(morePrev, thresholdSign + Const.kHundredPercent)
             //Touch finished
             this.onTouchEndNotify?.(nextPosition);
             this.setReadyNextTouch(nextPosition, true);
