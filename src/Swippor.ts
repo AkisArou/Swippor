@@ -42,8 +42,11 @@ export class Swippor {
 
     //Used for HTML elements setup. Startup method
     public setRefs(references: HTMLElement[]): this {
+        //First deactivate listeners if there are any, before setting references
         this.deactivateListeners();
+        //Add refs
         this.references = references;
+        //Attach listeners for each element
         this.activateListeners();
         return this;
     }
@@ -186,7 +189,7 @@ export class Swippor {
 
     //Removes animation on transitioning elements transition end
     private transitionEndHandler = (evt: TransitionEvent) => {
-        const position = Swippor.getSwipporDatasetAttribute(evt.target!);
+        const position = Swippor.getSwipporDatasetAttribute(evt.currentTarget!);
 
         this.references?.[position].classList.remove(this.kTransitionClass);
         //Sets was swiping towards null element to False because when swipes towards null element
@@ -203,7 +206,7 @@ export class Swippor {
     //Sets needed values for swiping functionality
     private touchStartHandler = (evt: TouchEvent): void => {
         evt.preventDefault();
-        this.setCurrentWorkingPosition(Swippor.getSwipporDatasetAttribute(evt.target!));
+        this.setCurrentWorkingPosition(Swippor.getSwipporDatasetAttribute(evt.currentTarget!));
 
         this.startingTouchX = evt.touches[0].clientX;
         this.elementWidth = this.references?.[0].offsetWidth ?? 0;
