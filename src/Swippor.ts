@@ -40,12 +40,18 @@ export class Swippor {
 
     /* Setters */
 
-    //Used for HTML elements setup
-    public setRefs(references: HTMLElement[] | undefined): this {
-        this.deactivate();
+    //Used for HTML elements setup. Startup method
+    public setRefs(references: HTMLElement[]): this {
+        this.deactivateListeners();
         this.references = references;
-        this.activate();
+        this.activateListeners();
         return this;
+    }
+
+    //Cleanup method
+    public removeRefs() {
+        this.deactivateListeners();
+        this.references = undefined;
     }
 
     //Sets Callback called when position successfully changed
@@ -79,7 +85,7 @@ export class Swippor {
 
 
     //Positions elements and subscribes to events
-    public activate(): void {
+    public activateListeners(): void {
         this.references?.forEach((ref, idx) => {
             Swippor.translate(ref, `${((idx - this.currentWorkingPosition) * 100)}${Const.kPercentage}`);
             ref.setAttribute(kSwipporDataset, idx.toString());
@@ -91,7 +97,7 @@ export class Swippor {
     }
 
     //Unsubscribes listeners when explicitly asked and when setRefs called.
-    public deactivate(): void {
+    public deactivateListeners(): void {
         this.references?.forEach(ref => {
             ref.removeEventListener(Const.kTransitionEnd, this.transitionEndHandler);
             ref.removeEventListener(Const.kTouchStart, this.touchStartHandler);

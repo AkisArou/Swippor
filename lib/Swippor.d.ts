@@ -13,13 +13,14 @@ export declare class Swippor {
     private currentWorkingPosition;
     private wasSwipingTowardsNullElement;
     private static translate;
-    setRefs(references: HTMLElement[] | undefined): this;
+    setRefs(references: HTMLElement[]): this;
+    removeRefs(): void;
     setTouchEndNotifier(onTouchEndNotify: TouchEndNotifiable): this;
     setThresholdFactor(thresholdFactor: number): this;
     setLastItemsThresholdFactor(lastItemsThresholdFactor: number): this;
     setTransitionClass(cls: string): this;
-    activate(): void;
-    deactivate(): void;
+    activateListeners(): void;
+    deactivateListeners(): void;
     onElementClicked: (position: number) => void;
     private setCurrentWorkingPosition;
     private setWasSwipingTowardsNullElement;
