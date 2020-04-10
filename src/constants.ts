@@ -1,4 +1,5 @@
 export const kHundredPercent = "100%";
+export const kTwoHundredPercent = "200%";
 export const kZero = "0";
 export const kPlus = "+";
 export const kMinus = "-";

@@ -2,7 +2,7 @@ import * as Const from "./constants";
 import {kSwipporDataset} from "./constants";
 
 type TouchEndNotifiable = (position: number) => void;
-type Elements = { currentShowingElement: HTMLElement, nextShowingElement: HTMLElement, previousElement: HTMLElement };
+type Elements = { currentShowingElement: HTMLElement, nextShowingElement: HTMLElement, previousElement: HTMLElement, morePrev:HTMLElement };
 
 export class Swippor {
     //Current manipulated objects
@@ -165,7 +165,8 @@ export class Swippor {
         return {
             currentShowingElement: this.references![position],
             nextShowingElement: this.references![position + (isMovingHandRight ? 1 : -1)],
-            previousElement: this.references![position + (isMovingHandRight ? -1 : 1)]
+            previousElement: this.references![position + (isMovingHandRight ? -1 : 1)],
+            morePrev:this.references![position + (isMovingHandRight ? +2 : -2)],
         }
     }
 
@@ -251,6 +252,8 @@ export class Swippor {
         const translationValNextShowingElement = singForNextShowingElement + changeNextShowingElement + Const.kPixel;
         //Ready for usage string on translation for previous showing element
         const translationValPreviousShowingElement = signForCurrentShowingElement + changePreviousElement + Const.kPixel;
+        console.log(translationValPreviousShowingElement)
+
         //Current and to be shown elements
         const {currentShowingElement, nextShowingElement, previousElement} = this.getElements(isMovingHandLeft, position);
         //Check swiping orientation by isMovingHandLeft and position
@@ -269,10 +272,10 @@ export class Swippor {
             //if there is a previous element, translate it accordingly.
             //It may not seems so difference but sometimes it sticks buggy to the edge of the screen
             //It is called also in normal swipe in else condition
-            if (previousElement) Swippor.translate(previousElement, translationValPreviousShowingElement);
 
             //Swipable until threshold and locked
             if (change > this.sideElementsThreshold) return;
+            if (previousElement) Swippor.translate(previousElement, translationValPreviousShowingElement);
 
             //New threshold swiping value computed by subtracting sideElementsThreshold with change
             //Shows swiping direction until reaching the threshold
@@ -294,6 +297,7 @@ export class Swippor {
             Swippor.translate(nextShowingElement, translationValNextShowingElement);
             //if there is a previous element, translate it accordingly.
             //It may not seems so difference but sometimes it sticks buggy to the edge of the screen
+            console.log(previousElement, "previousElement")
             if (previousElement) Swippor.translate(previousElement, translationValPreviousShowingElement)
         }
     };
@@ -322,7 +326,7 @@ export class Swippor {
         //Next position used for the onTouchEndNotify user set callback
         const nextPosition = isMovingHandRight ? position + 1 : position - 1;
         //Current and to be shown elements
-        const {currentShowingElement, nextShowingElement, previousElement} = this.getElements(isMovingHandRight, position);
+        const {currentShowingElement, nextShowingElement, previousElement, morePrev} = this.getElements(isMovingHandRight, position);
         //Check swiping orientation by isMovingHandLeft and position
         //Used to check for normal swiping or swiping towards null element
         //It emits only the initial swipe direction
@@ -372,10 +376,9 @@ export class Swippor {
             Swippor.translate(currentShowingElement, signForCurrentShowingElement + Const.kHundredPercent);
             Swippor.translate(nextShowingElement, Const.kZero);
 
-            //Because of buggy behaviour, previous element, sometimes sticks to the edges of the screen
-            //So i should re-position already physically hidden element to gain percentage translation instead of px
-            if (previousElement) Swippor.translate(previousElement, signForCurrentShowingElement + Const.kHundredPercent);
-
+            //
+            if (previousElement) Swippor.translate(previousElement, signForCurrentShowingElement + Const.kTwoHundredPercent);
+            if(morePrev) Swippor.translate(morePrev, thresholdSign + Const.kHundredPercent)
             //Touch finished
             this.onTouchEndNotify?.(nextPosition);
             this.setReadyNextTouch(nextPosition, true);
