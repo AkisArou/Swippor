@@ -1,8 +1,7 @@
-import * as Const from "./constants";
-import {kSwipporDataset} from "./constants";
+import * as Const from "../src/constants";
 
 type TouchEndNotifiable = (position: number) => void;
-type Elements = { currentShowingElement: HTMLElement, nextShowingElement: HTMLElement, previousElement: HTMLElement, morePrev:HTMLElement };
+type Elements = { currentShowingElement: HTMLElement, nextShowingElement: HTMLElement, previousElement: HTMLElement, morePrev: HTMLElement };
 
 export class Swippor {
     //Current manipulated objects
@@ -41,6 +40,21 @@ export class Swippor {
     /* Setters */
 
     //Used for HTML elements setup. Startup method
+    public setParentNode(parentNode: HTMLElement): this {
+        //Add refs by getting children of provided parentNode
+        this.setRefs([...parentNode.children] as HTMLElement[]);
+        return this;
+    }
+
+    //Used for HTML elements setup.
+    // Alternative Startup method by manual parentNode get by id
+    public setParentNodeById(parentNodeId: string): this {
+        return this.setParentNode(document.querySelector(parentNodeId) as HTMLElement);
+    }
+
+
+    //Used for HTML elements setup internally.
+    // Also ALTERNATIVE Startup method
     public setRefs(references: HTMLElement[]): this {
         //First deactivate listeners if there are any, before setting references
         this.deactivateListeners();
@@ -51,9 +65,12 @@ export class Swippor {
         return this;
     }
 
+
     //Cleanup method
-    public removeRefs() {
+    public cleanup() {
+        //First deactivate listeners
         this.deactivateListeners();
+        //Then set references to undefined
         this.references = undefined;
     }
 
@@ -88,10 +105,11 @@ export class Swippor {
 
 
     //Positions elements and subscribes to events
+    //Exposed method for manual activation in case of manual deactivation of listeners
     public activateListeners(): void {
         this.references?.forEach((ref, idx) => {
             Swippor.translate(ref, `${((idx - this.currentWorkingPosition) * 100)}${Const.kPercentage}`);
-            ref.setAttribute(kSwipporDataset, idx.toString());
+            ref.setAttribute(Const.kSwipporDataset, idx.toString());
             ref.addEventListener(Const.kTransitionEnd, this.transitionEndHandler);
             ref.addEventListener(Const.kTouchStart, this.touchStartHandler);
             ref.addEventListener(Const.kTouchMove, this.touchMoveHandler);
@@ -100,6 +118,7 @@ export class Swippor {
     }
 
     //Unsubscribes listeners when explicitly asked and when setRefs called.
+    //Exposed method for manual deactivation of listeners
     public deactivateListeners(): void {
         this.references?.forEach(ref => {
             ref.removeEventListener(Const.kTransitionEnd, this.transitionEndHandler);
@@ -111,7 +130,7 @@ export class Swippor {
 
 
     //Exposed secondary functionality for consistent single source of elements transformation
-    public onElementClicked = (position: number): void => {
+    public moveToElementByIndex = (position: number): void => {
         this.references?.forEach((ref, idx) => {
             ref.classList.add(this.kTransitionClass);
             Swippor.translate(ref, `${((idx - position) * 100)}${Const.kPercentage}`);
@@ -145,7 +164,7 @@ export class Swippor {
     //Returns element index from queried element attribute from DOM
     //Used in transitionEndHandler and touchStartHandler
     private static getSwipporDatasetAttribute(target: EventTarget): number {
-        return +(target as HTMLElement).getAttribute(kSwipporDataset)!;
+        return +(target as HTMLElement).getAttribute(Const.kSwipporDataset)!;
     }
 
 
@@ -166,7 +185,7 @@ export class Swippor {
             currentShowingElement: this.references![position],
             nextShowingElement: this.references![position + (isMovingHandRight ? 1 : -1)],
             previousElement: this.references![position + (isMovingHandRight ? -1 : 1)],
-            morePrev:this.references![position + (isMovingHandRight ? +2 : -2)],
+            morePrev: this.references![position + (isMovingHandRight ? +2 : -2)],
         }
     }
 
@@ -208,7 +227,6 @@ export class Swippor {
     private touchStartHandler = (evt: TouchEvent): void => {
         evt.preventDefault();
         this.setCurrentWorkingPosition(Swippor.getSwipporDatasetAttribute(evt.currentTarget!));
-        // this.references?.forEach(ref => ref.classList.add(this.kTransitionClass))
 
         this.startingTouchX = evt.touches[0].clientX;
         this.elementWidth = this.references?.[0].offsetWidth ?? 0;
@@ -262,7 +280,6 @@ export class Swippor {
         //Resets when the element resets to its original position
         const isInitialSwipeDirectionNegative = this.isInitialSwipeDirectionNegative(isMovingHandLeft, position);
 
-        // this.references?.forEach(ref => ref.classList.remove(this.kTransitionClass))
         //Check if elements are still animating. If so, return
         if (this.getElementsAreStillAnimating([currentShowingElement, nextShowingElement, previousElement])) return;
 
@@ -344,7 +361,7 @@ export class Swippor {
 
             if (previousElement)
                 Swippor.translate(previousElement, previousElementSign + Const.kHundredPercent);
-            if(morePrev)
+            if (morePrev)
                 Swippor.translate(morePrev, thresholdSign + Const.kTwoHundredPercent);
 
             Swippor.translate(currentShowingElement, Const.kZero);
@@ -381,7 +398,7 @@ export class Swippor {
             //
             if (previousElement) Swippor.translate(previousElement, signForCurrentShowingElement + Const.kTwoHundredPercent);
 
-            if(morePrev)
+            if (morePrev)
                 Swippor.translate(morePrev, thresholdSign + Const.kHundredPercent)
             //Touch finished
             this.onTouchEndNotify?.(nextPosition);
