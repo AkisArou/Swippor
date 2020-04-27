@@ -72,6 +72,8 @@ export class Swippor {
         this.deactivateListeners();
         //Then set references to undefined
         this.references = undefined;
+        //Remove onTouchEndNotify
+        this.onTouchEndNotify = undefined;
     }
 
     //Sets Callback called when position successfully changed
