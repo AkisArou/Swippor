@@ -227,7 +227,6 @@ export class Swippor {
 
     //Sets needed values for swiping functionality
     private touchStartHandler = (evt: TouchEvent): void => {
-        evt.preventDefault();
         this.setCurrentWorkingPosition(Swippor.getSwipporDatasetAttribute(evt.currentTarget!));
 
         this.startingTouchX = evt.touches[0].clientX;
@@ -322,33 +321,31 @@ export class Swippor {
     //Positions elements according to swiping state
     private touchEndHandler = (evt: TouchEvent): void => {
         const position = this.currentWorkingPosition;
-        //Prevent default browser behaviour
-        evt.preventDefault();
         //Position x value touch released
-        const realisingTouchX = evt.changedTouches[0].clientX;
+        const releasingTouchX = evt.changedTouches[0].clientX;
         //Always contains references when this runs. Added just for type safety
         if (!this.references) return;
         //Getting Swipe direction
-        const isMovingHandRight = this.getIsSwipingDirectionLeft(realisingTouchX);
+        const isMovingHandLeft = this.getIsSwipingDirectionLeft(releasingTouchX);
         //Absolute pixel change value from starting to realising x
-        const change = Math.abs(this.startingTouchX! - realisingTouchX);
+        const change = Math.abs(this.startingTouchX! - releasingTouchX);
         //Dont run on no change
         if (!change) return;
         //Sign for the original element caused touch event
-        const signForCurrentShowingElement = isMovingHandRight ? Const.kMinus : Const.kPlus;
+        const signForCurrentShowingElement = isMovingHandLeft ? Const.kMinus : Const.kPlus;
         //Negative or position sign for to be show element reverted back to its position cause of insufficient swipe
-        const thresholdSign = isMovingHandRight ? Const.kPlus : Const.kMinus;
+        const thresholdSign = isMovingHandLeft ? Const.kPlus : Const.kMinus;
         //Negative or position sign for previous element (if exists)
-        const previousElementSign = isMovingHandRight ? Const.kMinus : Const.kPlus;
+        const previousElementSign = isMovingHandLeft ? Const.kMinus : Const.kPlus;
         //Next position used for the onTouchEndNotify user set callback
-        const nextPosition = isMovingHandRight ? position + 1 : position - 1;
+        const nextPosition = isMovingHandLeft ? position + 1 : position - 1;
         //Current and to be shown elements
-        const {currentShowingElement, nextShowingElement, previousElement, morePrev} = this.getElements(isMovingHandRight, position);
+        const {currentShowingElement, nextShowingElement, previousElement, morePrev} = this.getElements(isMovingHandLeft, position);
         //Check swiping orientation by isMovingHandLeft and position
         //Used to check for normal swiping or swiping towards null element
         //It emits only the initial swipe direction
         //Resets when the element resets to its original position
-        const isInitialSwipeDirectionNegative = this.isInitialSwipeDirectionNegative(isMovingHandRight, position);
+        const isInitialSwipeDirectionNegative = this.isInitialSwipeDirectionNegative(isMovingHandLeft, position);
 
         // this.references?.forEach(ref => ref.classList.add(this.kTransitionClass))
         //
