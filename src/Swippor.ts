@@ -133,6 +133,8 @@ export class Swippor {
 
     //Exposed secondary functionality for consistent single source of elements transformation
     public moveToElementByIndex = (position: number): void => {
+        if(position === this.currentWorkingPosition) return;
+
         this.references?.forEach((ref, idx) => {
             ref.classList.add(this.kTransitionClass);
             Swippor.translate(ref, `${((idx - position) * 100)}${Const.kPercentage}`);
